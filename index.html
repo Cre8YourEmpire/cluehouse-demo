@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#140a22">
+<title>Cluehouse - A haunted escape through 2007 Franklin St</title>
+<style>
+  :root {
+    --bg: #110820;
+    --bg2: #1d0f33;
+    --card: rgba(36, 18, 60, 0.86);
+    --line: rgba(255, 138, 40, 0.28);
+    --orange: #ff8a28;
+    --orange2: #ffb35c;
+    --text: #f3e9ff;
+    --muted: #b9a6d3;
+    --bad: #ff5a6e;
+    --good: #8dffb0;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { background: #07030f; }
+  body {
+    min-height: 100vh;
+    background: radial-gradient(120% 80% at 50% 0%, #2c1450 0%, var(--bg) 55%, #07030f 100%) fixed;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+  }
+  .serif { font-family: Georgia, "Times New Roman", serif; }
+
+  /* fog */
+  .fog { position: fixed; inset: -20% -50%; pointer-events: none; z-index: 0; opacity: .5; }
+  .fog.a { background: radial-gradient(40% 25% at 30% 70%, rgba(190,160,230,.18), transparent 70%),
+                      radial-gradient(35% 20% at 70% 85%, rgba(160,130,210,.15), transparent 70%);
+           animation: drift 38s linear infinite alternate; }
+  .fog.b { background: radial-gradient(45% 22% at 60% 60%, rgba(200,170,240,.12), transparent 70%),
+                      radial-gradient(30% 18% at 20% 90%, rgba(255,150,60,.06), transparent 70%);
+           animation: drift 52s linear infinite alternate-reverse; }
+  @keyframes drift { from { transform: translateX(-12%); } to { transform: translateX(12%); } }
+
+  main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; padding: 16px 16px 48px; }
+  .screen { display: none; }
+  .screen.on { display: block; animation: fadein .5s ease; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: normal; margin: 0; }
+  .title {
+    font-size: 54px; letter-spacing: 1px; text-align: center; color: var(--orange2);
+    text-shadow: 0 0 12px rgba(255,138,40,.7), 0 0 34px rgba(255,90,0,.4);
+    animation: flicker 4s infinite;
+    margin-top: 28px;
+  }
+  @keyframes flicker {
+    0%,100% { opacity: 1; } 42% { opacity: .92; } 44% { opacity: .7; } 46% { opacity: .95; } 70% { opacity: .88; }
+  }
+  .subtitle { text-align: center; color: var(--muted); font-style: italic; margin: 6px 0 22px; font-size: 18px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px; margin: 14px 0; box-shadow: 0 10px 40px rgba(0,0,0,.45);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  }
+  .story p { margin: 0 0 10px; }
+  .note { font-size: 13px; color: var(--muted); text-align: center; margin-top: 18px; }
+
+  button, .btn {
+    font: inherit; min-height: 48px; min-width: 48px; padding: 10px 18px; border-radius: 12px;
+    border: 1px solid var(--line); background: #2a1645; color: var(--text); cursor: pointer;
+    touch-action: manipulation;
+  }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--orange2); outline-offset: 2px; }
+  .primary {
+    background: linear-gradient(180deg, #ff9a3d, #e8640c); color: #1b0b02; border: 0; font-weight: 700;
+    box-shadow: 0 0 18px rgba(255,120,20,.45);
+  }
+  .primary:active { transform: translateY(1px); }
+  .wide { width: 100%; display: block; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row > * { flex: 1 1 auto; }
+
+  /* candle */
+  .candles { display: flex; justify-content: center; gap: 34px; margin: 18px 0 4px; }
+  .candle { position: relative; width: 16px; height: 46px; background: linear-gradient(90deg, #e9dcc4, #fff6e6 50%, #cbb999); border-radius: 3px 3px 2px 2px; }
+  .candle::before { content: ""; position: absolute; left: 7px; top: -7px; width: 2px; height: 8px; background: #222; }
+  .candle::after {
+    content: ""; position: absolute; left: 2px; top: -27px; width: 12px; height: 22px;
+    background: radial-gradient(ellipse at 50% 70%, #fff7c2 0%, #ffbf3c 40%, rgba(255,110,0,.85) 65%, transparent 72%);
+    border-radius: 50% 50% 45% 45%; filter: blur(.4px);
+    box-shadow: 0 0 22px 6px rgba(255,150,40,.35);
+    animation: flame 1.6s ease-in-out infinite alternate; transform-origin: 50% 100%;
+  }
+  .candle:nth-child(2)::after { animation-duration: 1.2s; }
+  @keyframes flame { 0% { transform: scale(1,1) rotate(-2deg); } 50% { transform: scale(.92,1.08) rotate(2deg); } 100% { transform: scale(1.04,.95) rotate(-1deg); } }
+
+  /* top bar */
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; color: var(--muted); }
+  .brand { font-family: Georgia, serif; color: var(--orange2); font-size: 18px; }
+  .progress { height: 8px; background: rgba(255,255,255,.08); border-radius: 99px; overflow: hidden; margin: 8px 0 4px; }
+  .progress > i { display: block; height: 100%; background: linear-gradient(90deg, #ff7a18, #ffc46b); box-shadow: 0 0 10px #ff7a18; transition: width .5s; }
+
+  .roomname { font-size: 30px; color: var(--orange2); margin: 10px 0 2px; }
+  .tmpl { font-size: 12px; color: var(--muted); letter-spacing: .5px; text-transform: uppercase; }
+  .narration { font-family: Georgia, serif; font-style: italic; color: #e2d3f7; }
+
+  figure { margin: 10px 0; }
+  .photo { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: #000; }
+  figcaption { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .gallery figure { margin: 0; }
+  .gallery img { cursor: zoom-in; }
+  .zoomhint { font-size: 12px; color: var(--muted); }
+
+  /* tap hunt */
+  .tapwrap { position: relative; display: block; line-height: 0; cursor: crosshair; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+  .tapwrap img { pointer-events: none; }
+  .ring { position: absolute; border: 3px solid var(--orange); border-radius: 50%; box-shadow: 0 0 14px var(--orange), inset 0 0 12px rgba(255,138,40,.6); animation: pop .4s ease; pointer-events: none; }
+  .miss { position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; border: 3px solid var(--bad); opacity: 0; animation: missfade 1s ease; pointer-events: none; }
+  .dbg { position: absolute; outline: 2px dashed #0ff; pointer-events: none; }
+  @keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes missfade { 0% { opacity: 1; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.4); } }
+  .steps { list-style: none; padding: 0; margin: 8px 0 0; }
+  .steps li { padding: 6px 0; color: var(--muted); }
+  .steps li.done { color: var(--good); }
+  .steps li.cur { color: var(--text); font-weight: 600; }
+
+  /* what's missing */
+  .pair { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .pair .lbl { font-size: 13px; color: var(--muted); margin-bottom: 4px; line-height: 1.2; }
+  .blotwrap { position: relative; line-height: 0; }
+  .blot {
+    position: absolute; background: #0b0614; border-radius: 40% 40% 28% 28%;
+    box-shadow: 0 0 14px 10px #0b0614, 0 0 40px 18px rgba(80,40,120,.55);
+    animation: hover 3.5s ease-in-out infinite alternate;
+  }
+  .blot::before, .blot::after {
+    content: ""; position: absolute; top: 34%; width: 16%; height: 12%; border-radius: 50%;
+    background: radial-gradient(circle, #ffb35c, rgba(255,120,20,.2) 70%, transparent);
+  }
+  .blot::before { left: 28%; } .blot::after { right: 28%; }
+  @keyframes hover { from { transform: translateY(0); } to { transform: translateY(-3px); } }
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .options button { min-height: 52px; line-height: 1.2; }
+  .options button.wrong { border-color: var(--bad); opacity: .55; }
+
+  /* lock */
+  .lock { display: flex; justify-content: center; gap: 14px; margin: 14px 0; }
+  .dial { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .dial output { width: 64px; height: 72px; display: grid; place-items: center; font-size: 40px; font-family: Georgia, serif;
+    background: #0c0617; border: 2px solid var(--orange); border-radius: 12px; color: var(--orange2); box-shadow: inset 0 0 14px rgba(255,138,40,.35); }
+  .dial button { width: 64px; padding: 0; font-size: 20px; }
+  .clues { margin: 8px 0 0; padding-left: 20px; }
+  .clues li { margin-bottom: 6px; }
+
+  /* text answers */
+  .answer { display: flex; gap: 10px; margin-top: 12px; }
+  .answer input {
+    flex: 1; min-width: 0; min-height: 52px; font: inherit; font-size: 18px; padding: 10px 14px; border-radius: 12px;
+    border: 1px solid var(--line); background: #0c0617; color: var(--text);
+  }
+  .cipher { font-family: "Courier New", Courier, monospace; font-size: 30px; letter-spacing: 6px; text-align: center; color: var(--orange2);
+    text-shadow: 0 0 10px rgba(255,138,40,.6); margin: 10px 0; word-break: break-all; }
+  .chain { list-style: none; padding: 0; margin: 8px 0; }
+  .chain li { padding: 8px 10px; border-left: 3px solid rgba(255,255,255,.15); margin-bottom: 8px; }
+  .chain li.done { border-color: var(--good); color: var(--muted); }
+  .chain li.done b { color: var(--good); }
+  .chain li.cur { border-color: var(--orange); }
+
+  .msg { min-height: 26px; margin-top: 10px; font-weight: 600; }
+  .msg.bad { color: var(--bad); }
+  .msg.good { color: var(--good); }
+  .shake { animation: shake .45s; }
+  @keyframes shake { 10%, 90% { transform: translateX(-2px); } 20%, 80% { transform: translateX(4px); } 30%, 50%, 70% { transform: translateX(-8px); } 40%, 60% { transform: translateX(8px); } }
+
+  .hints { margin-top: 14px; }
+  .hints ol { margin: 10px 0 0; padding-left: 22px; color: #ffd9a8; }
+  .hints ol li { margin-bottom: 6px; }
+  .solved { text-align: center; }
+  .solved h3 { color: var(--good); font-size: 24px; margin-bottom: 6px; }
+
+  /* end */
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  .stat { background: #0c0617; border: 1px solid var(--line); border-radius: 12px; padding: 14px; text-align: center; }
+  .stat b { display: block; font-size: 30px; color: var(--orange2); font-family: Georgia, serif; }
+  .stat span { font-size: 13px; color: var(--muted); }
+
+  /* lightbox */
+  .lightbox { position: fixed; inset: 0; z-index: 10; background: rgba(5,2,10,.94); display: none; overflow: auto; padding: 12px; }
+  .lightbox.on { display: block; }
+  .lightbox img { width: 100%; height: auto; display: block; }
+  .lightbox button { position: sticky; top: 0; float: right; z-index: 2; margin-bottom: 8px; }
+
+  /* top bar controls */
+  .tbright { display: flex; align-items: center; gap: 8px; }
+  .timer { font-variant-numeric: tabular-nums; color: var(--orange2); font-family: Georgia, serif; font-size: 16px; }
+  .iconbtn { min-height: 40px; min-width: 40px; padding: 4px 8px; font-size: 18px; line-height: 1; border-radius: 10px; background: transparent; }
+  .startctl { display: flex; justify-content: flex-end; margin-top: -4px; }
+
+  /* team name */
+  .team { display: block; margin: 0 0 12px; }
+  .team span { display: block; font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+  .team input {
+    width: 100%; min-height: 52px; font: inherit; font-size: 18px; padding: 10px 14px; border-radius: 12px;
+    border: 1px solid var(--line); background: #0c0617; color: var(--text);
+  }
+
+  /* relics */
+  .relics { display: flex; gap: 6px; justify-content: center; margin: 8px 0 2px; flex-wrap: wrap; }
+  .relic { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-size: 20px;
+    background: #0c0617; border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.25); }
+  .relic.got { border-color: var(--orange); box-shadow: 0 0 10px rgba(255,138,40,.45); color: inherit; }
+  .relic.new { animation: relicpop .9s ease; }
+  @keyframes relicpop { 0% { transform: scale(.3); } 60% { transform: scale(1.35); box-shadow: 0 0 26px var(--orange); } 100% { transform: scale(1); } }
+  .relicwon { display: inline-block; font-size: 44px; margin: 4px 0; animation: relicrise .9s ease; filter: drop-shadow(0 0 12px rgba(255,138,40,.7)); }
+  @keyframes relicrise { 0% { transform: scale(.3) rotate(-20deg); opacity: 0; } 60% { transform: scale(1.3) rotate(6deg); opacity: 1; } 100% { transform: none; } }
+  .relicname { color: var(--orange2); font-family: Georgia, serif; font-style: italic; margin: 0 0 8px; }
+  .relicgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+  .relicgrid div { background: #0c0617; border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .relicgrid b { font-size: 22px; font-weight: normal; }
+
+  /* ending */
+  .rank { text-align: center; margin: 4px 0 0; }
+  .rank b { display: block; font-family: Georgia, serif; font-size: 28px; color: var(--good); font-weight: normal; }
+  .rank span { color: var(--muted); font-size: 14px; }
+  .msg.close { color: var(--orange2); }
+
+  /* door transition */
+  .doors { position: fixed; inset: 0; z-index: 20; display: none; pointer-events: none; }
+  .doors.on { display: block; pointer-events: auto; }
+  .door { position: absolute; top: 0; bottom: 0; width: 50.5%; background:
+      linear-gradient(90deg, rgba(0,0,0,.35), transparent 30%, transparent 70%, rgba(0,0,0,.35)),
+      repeating-linear-gradient(90deg, #2a1608 0 46px, #24130a 46px 50px), #2a1608;
+    box-shadow: inset 0 0 60px rgba(0,0,0,.8); transition: transform .8s cubic-bezier(.6,.05,.3,1); }
+  .door.l { left: 0; transform: translateX(-100%); border-right: 2px solid #120904; }
+  .door.r { right: 0; transform: translateX(100%); border-left: 2px solid #120904; }
+  .door.l::after, .door.r::after { content: ""; position: absolute; top: 50%; width: 12px; height: 12px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffd27a, #8a5a12); box-shadow: 0 0 10px rgba(255,180,60,.6); }
+  .door.l::after { right: 14px; } .door.r::after { left: 14px; }
+  .doors.shut .door { transform: none; }
+  .doorlabel { position: absolute; left: 0; right: 0; top: 42%; text-align: center; z-index: 2; font-family: Georgia, serif;
+    color: var(--orange2); font-size: 28px; text-shadow: 0 0 14px #000, 0 0 20px rgba(255,138,40,.6); opacity: 0; transition: opacity .3s; }
+  .doors.shut .doorlabel { opacity: 1; }
+  .doorlabel small { display: block; font-size: 14px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="fog a" aria-hidden="true"></div>
+<div class="fog b" aria-hidden="true"></div>
+
+<main>
+  <!-- START -->
+  <section id="start" class="screen" aria-labelledby="t1">
+    <div class="startctl"><button class="iconbtn sound" type="button"></button></div>
+    <div class="candles" aria-hidden="true"><div class="candle"></div><div class="candle"></div><div class="candle"></div></div>
+    <h1 id="t1" class="title">Cluehouse</h1>
+    <p class="subtitle serif" id="subtitle"></p>
+    <div class="card story">
+      <p>Fog has crept up the hill, and the old house at the corner has lit its windows again, one by one, though no one has lived there in a very long time.</p>
+      <p>Tonight the house has a guest: you. Every door you pass through will lock behind you, and each room keeps one secret. Solve it and the next door creaks open. Solve all six and the house lets you out.</p>
+      <p>The ghost plays fair: everything you need is in the photos.</p>
+    </div>
+    <label class="team"><span>Team name (optional)</span>
+      <input id="teamInput" type="text" maxlength="32" autocomplete="off" placeholder="The Midnight Crew"></label>
+    <button id="beginBtn" class="primary wide">Begin</button>
+    <div id="resumeBox" style="margin-top:10px"></div>
+    <p class="note">Local test demo - sample photos from Wikimedia Commons (see photos/CREDITS.md)</p>
+  </section>
+
+  <!-- ROOM -->
+  <section id="room" class="screen" aria-live="polite">
+    <div class="topbar"><span class="brand">Cluehouse</span>
+      <span class="tbright"><span id="progressText"></span><span class="timer" id="timer" aria-label="Time elapsed"></span><button class="iconbtn sound" type="button"></button></span></div>
+    <div class="progress" aria-hidden="true"><i id="progressFill"></i></div>
+    <div class="relics" id="relicStrip" aria-label="Relics collected"></div>
+    <h2 class="roomname" id="roomName"></h2>
+    <div class="tmpl" id="roomTmpl"></div>
+    <p class="narration" id="narration"></p>
+    <div id="gallery"></div>
+    <div class="card" id="puzzle"></div>
+    <div class="card hints" id="hintsCard">
+      <div class="row">
+        <button id="hintBtn">Hint</button>
+      </div>
+      <ol id="hintList"></ol>
+    </div>
+    <div class="card solved" id="solvedCard" hidden>
+      <h3 id="solvedTitle">Solved!</h3>
+      <p id="solvedText"></p>
+      <div id="relicWon"></div>
+      <button id="nextBtn" class="primary wide">Next room</button>
+    </div>
+  </section>
+
+  <!-- END -->
+  <section id="end" class="screen" aria-labelledby="t3">
+    <div class="candles" aria-hidden="true"><div class="candle"></div><div class="candle"></div><div class="candle"></div></div>
+    <h1 id="t3" class="title">You escaped!</h1>
+    <p class="subtitle serif" id="endText"></p>
+    <div class="rank" id="rank"></div>
+    <div class="stats">
+      <div class="stat"><b id="statHints">0</b><span>hints used</span></div>
+      <div class="stat"><b id="statTime">-</b><span>time taken</span></div>
+    </div>
+    <div class="relicgrid" id="relicGrid" aria-label="Relics collected"></div>
+    <button id="shareBtn" class="primary wide">Share your escape</button>
+    <div class="msg good" id="shareMsg" role="status" style="text-align:center"></div>
+    <button id="againBtn" class="wide">Play again</button>
+    <p class="note">Local test demo - sample photos from Wikimedia Commons (see photos/CREDITS.md)</p>
+  </section>
+</main>
+
+<div class="doors" id="doors" aria-hidden="true">
+  <div class="door l"></div><div class="door r"></div>
+  <div class="doorlabel" id="doorLabel"></div>
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo">
+  <button id="lbClose">Close</button>
+  <img id="lbImg" alt="">
+</div>
+
+<script>
+/* Game data is embedded (no fetch) so the demo works from file:// too.
+   Every answer below comes from demo/house.json; see SOLUTIONS.md. */
+var GAME = {
+  houseNumber: "2007",
+  street: "Franklin St",
+  endText: "The front door swings open, the fog parts, and the house on Franklin Street goes dark behind you... for now.",
+  showTimer: true,
+  /* Ranks are earned by hints used (fewest first). Highest "maxHints" that fits wins. */
+  ranks: [
+    { maxHints: 0, title: "Ghost Whisperer", line: "Not a single hint. The house is a little afraid of you." },
+    { maxHints: 3, title: "Midnight Sleuth", line: "Sharp eyes, steady nerves." },
+    { maxHints: 7, title: "Brave Visitor", line: "You asked the ghost for help, and it answered." },
+    { maxHints: 999, title: "Lucky Survivor", line: "The house let you go. This time." }
+  ],
+  /* Appended to the share text. Set to "" to leave it off. */
+  shareTag: "Made with Cluehouse: a custom escape game built from your own house photos. cre8yourempire.gumroad.com/l/cmfak",
+  credits: {
+    "01-front-exterior.jpg": "Photo: Ppienovagem, CC BY 4.0, via Wikimedia Commons",
+    "default": "Photo: Daderot, CC0, via Wikimedia Commons"
+  },
+  rooms: [
+    {
+      id: "exterior",
+      relic: { icon: "🏮", name: "Porch lantern flame" },
+      name: "Front Exterior & Entrance",
+      template: "T01",
+      type: "hidden-object-hunt",
+      narration: "Fog rolls up the street. The old house watches you from behind its curtains. Before the door will open, it wants proof that you are paying attention.",
+      gallery: [],
+      puzzle: {
+        kind: "hunt",
+        photo: "01-front-exterior.jpg",
+        alt: "Victorian house with a corner turret and arched front porch",
+        intro: "Tap each thing in the photo, in order.",
+        steps: [
+          { prompt: "Tap the sign that tells the living which house this is.",
+            label: "House number sign",
+            boxes: [[40, 73, 11, 11]],
+            hints: ["Look low, near where the front steps begin.",
+                    "It's on the left gatepost beside the front steps: white numbers on black, reading 2007."] },
+          { prompt: "Tap the round tower where the ghost keeps watch.",
+            label: "Turret",
+            boxes: [[29, 10, 18, 30]],
+            hints: ["Look up, to the highest point of the house.",
+                    "Top left of the house: the round turret with the pointed, shingled cone roof."] },
+          { prompt: "Tap one of the lanterns guarding the front door.",
+            label: "Wall lantern",
+            boxes: [[50, 60, 8, 12], [63.5, 60, 8, 12]],
+            hints: ["They're inside the arched porch, on either side of the dark double door.",
+                    "Two small black wall lanterns, one each side of the doorway, center right. Either one counts."] }
+        ],
+        solvedText: "The porch lanterns flare orange. With a groan, the front door unlatches."
+      }
+    },
+    {
+      id: "front_hall",
+      relic: { icon: "🕰️", name: "Brass clock weight" },
+      name: "Front Hall",
+      template: "T03",
+      type: "combination-lock",
+      narration: "The door slams behind you. In the hall, a tall clock ticks far too slowly. A cold brass lock has appeared on the parlor door, with three dials.",
+      gallery: ["02-front-hall.jpg", "03-hall-clock.jpg", "04-stairway-window.jpg"],
+      puzzle: {
+        kind: "lock",
+        text: "Each dial is a count. Look closely at the hall photos.",
+        clues: [
+          "Dial 1: the brass weights hanging inside the tall clock.",
+          "Dial 2: the black toggle switches on the brass plate beside the clock.",
+          "Dial 3: how many leaded squares sit side by side across one row of the stairway window."
+        ],
+        answer: "243",
+        hints: ["Use the clock photo for dials 1 and 2: count the urn-shaped brass weights, then the small black toggles on the wall plate (not the push-button plate below it).",
+                "Dial 1 is 2 and dial 2 is 4. For dial 3, count the squares across a single row of the window."],
+        solvedText: "Click, click, click. The lock falls open and the parlor doors slide apart."
+      }
+    },
+    {
+      id: "parlor",
+      relic: { icon: "🖼️", name: "Empty portrait frame" },
+      name: "Parlor",
+      template: "T04",
+      type: "whats-missing",
+      narration: "The parlor smells of candle smoke and old lace. You look away for a heartbeat, and when you look back, something in the room has gone.",
+      gallery: [],
+      puzzle: {
+        kind: "missing",
+        photo: "05-parlor.jpg",
+        alt: "Parlor with a grand piano, pink sofa in a bay window and a marble fireplace",
+        text: "Compare the parlor before and after the ghost passed through. What's missing?",
+        blot: [12.5, 22.5, 15, 25],
+        options: ["Framed portrait painting", "Landscape painting", "Pink sofa", "Grand piano", "Vases on the mantel", "Upholstered armchair"],
+        answer: "Framed portrait painting",
+        hints: ["Compare the walls, not the floor.",
+                "Look at the left wall, above the piano. Someone used to be watching you from there."],
+        solvedText: "The portrait was gone. The gentleman has stepped out of his frame... and the door to the dining room is open."
+      }
+    },
+    {
+      id: "dining_room",
+      relic: { icon: "🍽️", name: "Fan-painted china plate" },
+      name: "Dining Room",
+      template: "T02",
+      type: "riddle-chain",
+      narration: "A table set for guests who never arrived. From somewhere under the chandelier, a voice whispers riddles, one after another.",
+      gallery: ["07-dining-room.jpg"],
+      puzzle: {
+        kind: "chain",
+        steps: [
+          { riddle: "We stand in a ring but never dance. We wear flowers but never pick them. How many of us wait around the table?",
+            accept: ["6", "six"], show: "6",
+            hints: ["Count the chairs with embroidered flower seats, including the armchair at the front right.",
+                    "Two in front on the left, one at the far left end, two along the back, and one armchair at the front right."] },
+          { riddle: "I wear tulips made of glass and bow my head above your supper, yet I have never bloomed. What am I?",
+            accept: ["chandelier", "chandeliers", "light", "ceiling light", "light fixture", "lamp", "hanging light"], show: "Chandelier",
+            hints: ["Look up.", "It hangs over the table, top center, with two tiers of glass shades."] },
+          { riddle: "Behind my glass door I keep a fan that has never cooled anyone. What am I?",
+            accept: ["china cabinet", "built-in china cabinet", "cabinet", "china cupboard", "cupboard", "china hutch", "hutch", "display cabinet", "glass cabinet", "china closet"], show: "China cabinet",
+            hints: ["The 'fan' is a fan-shaped decorated plate.",
+                    "Right wall, built into the paneling, shelves full of plates and cups."] }
+        ],
+        solvedText: "The voice sighs, satisfied. The china rattles and the kitchen door swings open."
+      }
+    },
+    {
+      id: "kitchen",
+      relic: { icon: "🗝️", name: "Little iron key" },
+      name: "Kitchen",
+      template: "T05",
+      type: "cipher-caesar",
+      narration: "Pots tick as they cool on a stove that no one lit. Frost creeps over the cupboard glass and spells out strange letters.",
+      gallery: ["10-kitchen-cabinet.jpg", "08-kitchen-stove.jpg", "09-kitchen-sink.jpg"],
+      puzzle: {
+        kind: "text",
+        text: "Written in the frost on the cupboard glass:",
+        cipher: "JLQJHU",
+        text2: "Every letter has been pushed 3 steps forward in the alphabet. It names one of the canisters on the cupboard's middle shelf. Which one holds the key?",
+        accept: ["ginger", "ginger canister", "ginger jar"],
+        placeholder: "Canister label",
+        hints: ["Move every letter 3 steps back: J becomes G, L becomes I.",
+                "G-I-N... It's the last canister at the right end of the middle shelf."],
+        solvedText: "Inside the Ginger canister: a little iron key. The back stairs are unlocked."
+      }
+    },
+    {
+      id: "toy_room",
+      relic: { icon: "🎩", name: "The clown's hat" },
+      name: "Toy Room",
+      template: "T09",
+      type: "label-anagram",
+      narration: "Upstairs, the teddy bears have turned their heads to watch you. On the little table a toy bank rattles by itself. Its painted label has been scrambled.",
+      gallery: ["13-toy-room.jpg"],
+      puzzle: {
+        kind: "text",
+        text: "The ghost rearranged the letters painted on the base of the mechanical bank into:",
+        cipher: "GRIT DOCK",
+        text2: "Put the letters back. What does the bank's base really say?",
+        accept: ["trick dog", "trickdog", "trick dog bank"],
+        placeholder: "The bank's label",
+        hints: ["Find the small green, red and yellow bank on the children's table, with a clown on top.",
+                "It's a performing animal: T _ _ _ _  D _ _."],
+        solvedText: "The clown on the bank tips its hat. Somewhere far below, the front door creaks open."
+      }
+    }
+  ]
+};
+
+(function () {
+  "use strict";
+  var SAVE_KEY = "cluehouse-demo-v1";
+  var MUTE_KEY = "cluehouse-muted";
+  var rooms = GAME.rooms;
+  var params = new URLSearchParams(location.search);
+  var DEBUG = params.get("debug") === "1";
+
+  var state = freshState();
+  function freshState() {
+    return { room: 0, step: 0, hintsShown: 0, totalHints: 0, solved: false, start: null, end: null,
+             elapsed: 0, runAt: null, team: "", dials: [0, 0, 0], wrongOpts: [] };
+  }
+  // Elapsed play time. Paused while the tab is hidden, so a phone left in a pocket or a game
+  // resumed the next day doesn't count the gap.
+  function elapsed() { return (state.elapsed || 0) + (state.runAt ? Date.now() - state.runAt : 0); }
+  function pauseClock() { if (state.runAt) { state.elapsed = elapsed(); state.runAt = null; } }
+  function runClock() { if (state.start && !state.end && !state.runAt) state.runAt = Date.now(); }
+  function save() {
+    try {
+      var snap = JSON.parse(JSON.stringify(state));
+      snap.elapsed = elapsed(); snap.runAt = null;
+      localStorage.setItem(SAVE_KEY, JSON.stringify(snap));
+    } catch (e) {}
+  }
+  function load() {
+    try {
+      var s = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
+      if (!s || typeof s.room !== "number") return null;
+      var f = freshState();
+      for (var k in f) if (!(k in s)) s[k] = f[k];
+      // Saves from the first version tracked only start/end wall-clock times.
+      if (!s.elapsed && s.start) s.elapsed = (s.end || Date.now()) - s.start;
+      s.runAt = null;
+      return s;
+    } catch (e) { return null; }
+  }
+  function clearSave() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} }
+
+  // ---------- helpers ----------
+  function $(id) { return document.getElementById(id); }
+  function el(tag, attrs, kids) {
+    var n = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === "text") n.textContent = attrs[k];
+      else if (k === "class") n.className = attrs[k];
+      else if (k.slice(0, 2) === "on") n.addEventListener(k.slice(2), attrs[k]);
+      else n.setAttribute(k, attrs[k]);
+    }
+    (kids || []).forEach(function (c) { if (c) n.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+    return n;
+  }
+  function norm(s) {
+    s = String(s || "").toLowerCase().trim();
+    if (s.normalize) s = s.normalize("NFKD").replace(/[̀-ͯ]/g, "");
+    s = s.replace(/^(the|a|an)\s+/, "");
+    return s.replace(/[^a-z0-9]/g, "");
+  }
+  function matches(input, accept) {
+    var v = norm(input);
+    if (!v) return false;
+    return accept.some(function (a) { return norm(a) === v; });
+  }
+  function lev(a, b) {
+    var m = a.length, n = b.length, d = [], i, j;
+    for (i = 0; i <= m; i++) d[i] = [i];
+    for (j = 0; j <= n; j++) d[0][j] = j;
+    for (i = 1; i <= m; i++) for (j = 1; j <= n; j++)
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return d[m][n];
+  }
+  // A typo away from a word answer (never for numbers, so counts can't be brute-forced by "close").
+  function nearMiss(input, accept) {
+    var v = norm(input);
+    if (v.length < 4 || /^[0-9]+$/.test(v)) return false;
+    return accept.some(function (a) {
+      var t = norm(a); if (t.length < 4) return false;
+      return lev(v, t) <= (t.length >= 8 ? 2 : 1);
+    });
+  }
+  function credit(file) { return GAME.credits[file] || GAME.credits["default"]; }
+  function photoFigure(file, alt, zoomable) {
+    var img = el("img", { class: "photo", src: "photos/" + file, alt: alt || "", loading: "lazy" });
+    if (zoomable) {
+      img.addEventListener("click", function () { openLightbox(file, alt); });
+      img.setAttribute("role", "button"); img.setAttribute("tabindex", "0");
+      img.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLightbox(file, alt); } });
+    }
+    return el("figure", null, [img, el("figcaption", { text: credit(file) })]);
+  }
+  function openLightbox(file, alt) { $("lbImg").src = "photos/" + file; $("lbImg").alt = alt || ""; $("lightbox").classList.add("on"); $("lbClose").focus(); }
+  function closeLightbox() { $("lightbox").classList.remove("on"); }
+  function shake(node) { node.classList.remove("shake"); void node.offsetWidth; node.classList.add("shake"); }
+  var WRONG = ["The ghost laughs. Not quite.", "A cold draft... that's not it.", "The candles gutter. Try again.", "Wrong. Something giggles in the walls."];
+  function wrongMsg(msgNode, target) {
+    msgNode.className = "msg bad";
+    msgNode.textContent = WRONG[Math.floor(Math.random() * WRONG.length)];
+    shake(target || msgNode);
+    sfx("bad"); buzz([60, 40, 60]);
+  }
+  function closeMsg(msgNode) {
+    msgNode.className = "msg close";
+    msgNode.textContent = "So close... the ghost leans in. Check your spelling.";
+    sfx("hint"); buzz(30);
+  }
+  function fmtTime(ms) {
+    if (ms == null || !isFinite(ms) || ms < 0) return "-";
+    var s = Math.round(ms / 1000), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), r = s % 60;
+    var mm = (h ? String(m).padStart(2, "0") : String(m)) + ":" + String(r).padStart(2, "0");
+    return h ? h + ":" + mm : mm;
+  }
+
+  // ---------- sound + haptics (synthesized; no audio files, works offline) ----------
+  var muted = false;
+  try { muted = localStorage.getItem(MUTE_KEY) === "1"; } catch (e) {}
+  var ac = null;
+  function audio() {
+    if (muted) return null;
+    if (!ac) { var C = window.AudioContext || window.webkitAudioContext; if (!C) return null; try { ac = new C(); } catch (e) { return null; } }
+    if (ac.state === "suspended") ac.resume();
+    return ac;
+  }
+  function tone(a, freq, t0, dur, type, vol, freqEnd) {
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = type || "sine"; o.frequency.setValueAtTime(freq, t0);
+    if (freqEnd) o.frequency.exponentialRampToValueAtTime(freqEnd, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol || 0.15, t0 + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(a.destination); o.start(t0); o.stop(t0 + dur + 0.05);
+  }
+  function noise(a, t0, dur, f0, f1, vol) {
+    var len = Math.floor(a.sampleRate * dur), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+    for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    var src = a.createBufferSource(), bp = a.createBiquadFilter(), g = a.createGain();
+    src.buffer = buf; bp.type = "bandpass"; bp.Q.value = 9;
+    bp.frequency.setValueAtTime(f0, t0); bp.frequency.exponentialRampToValueAtTime(f1, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + 0.08); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(bp); bp.connect(g); g.connect(a.destination); src.start(t0);
+  }
+  function sfx(name) {
+    var a = audio(); if (!a) return;
+    var t = a.currentTime + 0.01;
+    try {
+      if (name === "good") { tone(a, 659, t, .18, "triangle", .14); tone(a, 988, t + .1, .35, "triangle", .12); }
+      else if (name === "bad") { tone(a, 140, t, .35, "sawtooth", .07, 70); }
+      else if (name === "tick") { tone(a, 1800, t, .03, "square", .03); }
+      else if (name === "hint") { tone(a, 520, t, .5, "sine", .07, 780); tone(a, 523 * 1.5, t + .08, .5, "sine", .04, 1170); }
+      else if (name === "solve") { [523, 659, 784, 1047].forEach(function (f, i) { tone(a, f, t + i * .09, .45, "triangle", .11); }); }
+      else if (name === "door") { noise(a, t, 1.1, 300, 900, .22); tone(a, 55, t, 1.0, "sine", .2, 40); }
+      else if (name === "win") { [392, 523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(a, f, t + i * .12, .7, "triangle", .1); }); tone(a, 98, t, 1.6, "sine", .12); }
+    } catch (e) {}
+  }
+  function buzz(p) { if (!muted && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
+  function drawSound() {
+    [].forEach.call(document.querySelectorAll(".sound"), function (b) {
+      b.textContent = muted ? "🔇" : "🔊";
+      b.setAttribute("aria-label", muted ? "Sound off. Tap to turn on" : "Sound on. Tap to mute");
+      b.setAttribute("aria-pressed", muted ? "true" : "false");
+    });
+  }
+  function toggleSound() {
+    muted = !muted;
+    try { localStorage.setItem(MUTE_KEY, muted ? "1" : "0"); } catch (e) {}
+    drawSound(); if (!muted) sfx("tick");
+  }
+
+  // ---------- timer ----------
+  var timerId = null;
+  function drawTimer() { $("timer").textContent = GAME.showTimer ? fmtTime(elapsed()) : ""; }
+  function startTicker() { runClock(); drawTimer(); if (!timerId) timerId = setInterval(drawTimer, 1000); }
+  function stopTicker() { clearInterval(timerId); timerId = null; }
+  document.addEventListener("visibilitychange", function () {
+    if (!state.start || state.end) return;
+    if (document.hidden) { pauseClock(); save(); } else if ($("room").classList.contains("on")) { runClock(); drawTimer(); }
+  });
+  window.addEventListener("pagehide", function () { if (state.start && !state.end) save(); });
+
+  // ---------- relics ----------
+  function earned(i) { return i < state.room || (i === state.room && state.solved) || !!state.end; }
+  function drawRelics(newIndex) {
+    var strip = $("relicStrip"); strip.innerHTML = "";
+    rooms.forEach(function (r, i) {
+      if (!r.relic) return;
+      var got = earned(i);
+      strip.appendChild(el("span", { class: "relic" + (got ? " got" : "") + (i === newIndex ? " new" : ""),
+        title: got ? r.relic.name : "Not found yet", text: got ? r.relic.icon : "?" }));
+    });
+  }
+
+  // ---------- screens ----------
+  function show(id) {
+    ["start", "room", "end"].forEach(function (s) { $(s).classList.toggle("on", s === id); });
+    window.scrollTo(0, 0);
+  }
+
+  function renderStart() {
+    stopTicker();
+    $("subtitle").textContent = "A haunted escape through " + GAME.houseNumber + " " + GAME.street;
+    var saved = load(), box = $("resumeBox");
+    box.innerHTML = "";
+    if (saved && saved.start && !saved.end && saved.room < rooms.length) {
+      if (saved.team) $("teamInput").value = saved.team;
+      box.appendChild(el("button", { class: "wide", text: "Continue" + (saved.team ? " as " + saved.team : "") + " (Room " + (saved.room + 1) + " of " + rooms.length + ", " + fmtTime(saved.elapsed) + ")",
+        onclick: function () { state = saved; resumeRoom(); } }));
+    }
+    show("start");
+  }
+
+  function begin() {
+    state = freshState();
+    state.team = $("teamInput").value.trim().slice(0, 32);
+    state.start = Date.now();
+    audio(); // unlock audio on this tap (iOS needs a user gesture)
+    sfx("door"); buzz(40);
+    enterRoom();
+  }
+
+  // Fresh entry into the current room: reset the per-room progress.
+  function enterRoom() {
+    state.step = 0; state.hintsShown = 0; state.solved = false; state.dials = [0, 0, 0]; state.wrongOpts = [];
+    save();
+    renderRoom();
+    show("room");
+    startTicker();
+  }
+  // Resume a saved game exactly where it stopped: same step, dials, crossed-out options and hints already paid for.
+  function resumeRoom() {
+    audio();
+    if (state.solved) { renderRoom(); show("room"); startTicker(); showSolved(false); return; }
+    renderRoom(); show("room"); startTicker(); save();
+  }
+
+  function renderRoom() {
+    var r = rooms[state.room], n = state.room + 1;
+    $("progressText").textContent = "Room " + n + " of " + rooms.length;
+    $("progressFill").style.width = ((n - 1 + (state.solved ? 1 : 0)) / rooms.length * 100) + "%";
+    $("roomName").textContent = r.name;
+    $("roomTmpl").textContent = r.type.replace(/-/g, " ");
+    $("narration").textContent = r.narration;
+    drawRelics();
+
+    var g = $("gallery"); g.innerHTML = "";
+    if (r.gallery.length) {
+      var grid = el("div", { class: r.gallery.length > 1 ? "gallery" : "" });
+      r.gallery.forEach(function (f, i) {
+        var fig = photoFigure(f, r.name + " photo " + (i + 1), true);
+        if (r.gallery.length > 2 && i === 0) fig.style.gridColumn = "1 / -1";
+        grid.appendChild(fig);
+      });
+      g.appendChild(grid);
+      g.appendChild(el("div", { class: "zoomhint", text: "Tap a photo to enlarge it." }));
+    }
+
+    var p = $("puzzle"); p.innerHTML = "";
+    ({ hunt: renderHunt, lock: renderLock, missing: renderMissing, chain: renderChain, text: renderText })[r.puzzle.kind](p, r.puzzle);
+
+    $("solvedCard").hidden = true;
+    $("hintsCard").hidden = false;
+    renderHints();
+  }
+
+  // ---------- hints ----------
+  function currentHints() {
+    var pz = rooms[state.room].puzzle;
+    if (pz.steps) return (pz.steps[state.step] || {}).hints || [];
+    return pz.hints || [];
+  }
+  function renderHints() {
+    var hs = currentHints(), list = $("hintList"), btn = $("hintBtn");
+    list.innerHTML = "";
+    for (var i = 0; i < state.hintsShown && i < hs.length; i++) list.appendChild(el("li", { text: hs[i] }));
+    var left = hs.length - state.hintsShown;
+    btn.disabled = left <= 0 || state.solved;
+    btn.textContent = left > 0 ? "Hint (" + left + " left)" : "No more hints";
+  }
+  function useHint() {
+    var hs = currentHints();
+    if (state.hintsShown >= hs.length || state.solved) return;
+    state.hintsShown++; state.totalHints++;
+    sfx("hint");
+    save(); renderHints();
+  }
+  function nextStep() { state.step++; state.hintsShown = 0; save(); renderHints(); }
+
+  // ---------- solve ----------
+  function showSolved(fresh) {
+    var r = rooms[state.room], last = state.room === rooms.length - 1;
+    $("solvedText").textContent = r.puzzle.solvedText;
+    var won = $("relicWon"); won.innerHTML = "";
+    if (r.relic) {
+      won.appendChild(el("div", { class: "relicwon", "aria-hidden": "true", text: r.relic.icon }));
+      won.appendChild(el("p", { class: "relicname", text: "You found a relic: " + r.relic.name }));
+    }
+    $("nextBtn").textContent = last ? "Escape the house" : "Next room";
+    $("hintsCard").hidden = true;
+    $("solvedCard").hidden = false;
+    $("progressFill").style.width = ((state.room + 1) / rooms.length * 100) + "%";
+    drawRelics(fresh ? state.room : -1);
+    setTimeout(function () { $("solvedCard").scrollIntoView({ behavior: "smooth", block: "center" }); $("nextBtn").focus({ preventScroll: true }); }, fresh ? 250 : 0);
+  }
+  function solveRoom() {
+    state.solved = true;
+    save();
+    sfx("solve"); buzz([30, 50, 30, 50, 120]);
+    showSolved(true);
+  }
+  var transitioning = false;
+  function nextRoom() {
+    if (transitioning) return;
+    var last = state.room >= rooms.length - 1;
+    var label = $("doorLabel");
+    label.innerHTML = "";
+    if (last) label.appendChild(document.createTextNode("The front door..."));
+    else { label.appendChild(el("small", { text: "Room " + (state.room + 2) + " of " + rooms.length })); label.appendChild(document.createTextNode(rooms[state.room + 1].name)); }
+    transitioning = true;
+    var doors = $("doors");
+    doors.classList.add("on"); void doors.offsetWidth; doors.classList.add("shut");
+    sfx("door"); buzz(60);
+    setTimeout(function () {
+      if (!last) { state.room++; enterRoom(); }
+      else { state.elapsed = elapsed(); state.runAt = null; state.end = Date.now(); stopTicker(); save(); renderEnd(); sfx("win"); }
+      setTimeout(function () {
+        doors.classList.remove("shut");
+        setTimeout(function () { doors.classList.remove("on"); transitioning = false; }, 850);
+      }, 450);
+    }, 850);
+  }
+
+  // ---------- puzzle: hidden-object hunt ----------
+  function renderHunt(root, pz) {
+    var wrap = el("div", { class: "tapwrap", role: "img", "aria-label": pz.alt });
+    var img = el("img", { class: "photo", src: "photos/" + pz.photo, alt: "" });
+    wrap.appendChild(img);
+    var list = el("ol", { class: "steps" });
+    var prompt = el("p", { class: "narration" });
+    var msg = el("div", { class: "msg", role: "status" });
+
+    function placeBox(b, cls) {
+      return el("div", { class: cls, style: "left:" + b[0] + "%;top:" + b[1] + "%;width:" + b[2] + "%;height:" + b[3] + "%" });
+    }
+    if (DEBUG) pz.steps.forEach(function (s) { s.boxes.forEach(function (b) { wrap.appendChild(placeBox(b, "dbg")); }); });
+    // On resume, re-mark the targets already found.
+    for (var i = 0; i < state.step && i < pz.steps.length; i++) wrap.appendChild(placeBox(pz.steps[i].boxes[0], "ring"));
+
+    function drawSteps() {
+      list.innerHTML = "";
+      pz.steps.forEach(function (s, i) {
+        var cls = i < state.step ? "done" : i === state.step ? "cur" : "";
+        list.appendChild(el("li", { class: cls, text: (i < state.step ? "✓ " : (i + 1) + ". ") + (i <= state.step ? s.prompt : "???") }));
+      });
+      prompt.textContent = state.step < pz.steps.length ? pz.steps[state.step].prompt : "All found.";
+    }
+
+    wrap.addEventListener("click", function (e) {
+      if (state.solved || state.step >= pz.steps.length) return;
+      var rect = img.getBoundingClientRect();
+      var x = (e.clientX - rect.left) / rect.width * 100, y = (e.clientY - rect.top) / rect.height * 100;
+      var step = pz.steps[state.step];
+      var hit = step.boxes.filter(function (b) { return x >= b[0] && x <= b[0] + b[2] && y >= b[1] && y <= b[1] + b[3]; })[0];
+      if (hit) {
+        wrap.appendChild(placeBox(hit, "ring"));
+        msg.className = "msg good"; msg.textContent = "Found: " + step.label + ".";
+        nextStep();
+        drawSteps();
+        if (state.step >= pz.steps.length) solveRoom(); else { sfx("good"); buzz(35); }
+      } else {
+        var m = el("div", { class: "miss", style: "left:" + x + "%;top:" + y + "%" });
+        wrap.appendChild(m); setTimeout(function () { m.remove(); }, 1000);
+        msg.className = "msg bad"; msg.textContent = "Only cold air there. Keep looking.";
+        shake(msg); sfx("bad"); buzz(25);
+      }
+    });
+
+    root.appendChild(el("p", { text: pz.intro }));
+    root.appendChild(prompt);
+    root.appendChild(el("figure", null, [wrap, el("figcaption", { text: credit(pz.photo) })]));
+    root.appendChild(msg);
+    root.appendChild(list);
+    drawSteps();
+  }
+
+  // ---------- puzzle: combination lock ----------
+  function renderLock(root, pz) {
+    var n = pz.answer.length;
+    state.dials = (state.dials || []).slice(0, n); while (state.dials.length < n) state.dials.push(0);
+    root.appendChild(el("p", { text: pz.text }));
+    var ol = el("ol", { class: "clues" });
+    pz.clues.forEach(function (c) { ol.appendChild(el("li", { text: c })); });
+    root.appendChild(ol);
+    var lock = el("div", { class: "lock", role: "group", "aria-label": "Combination lock" });
+    var outs = [];
+    for (var i = 0; i < n; i++) (function (i) {
+      var out = el("output", { "aria-live": "polite", "aria-label": "Dial " + (i + 1) });
+      out.textContent = state.dials[i];
+      outs.push(out);
+      lock.appendChild(el("div", { class: "dial" }, [
+        el("button", { "aria-label": "Dial " + (i + 1) + " up", text: "▲", onclick: function () { turn(i, 1); } }),
+        out,
+        el("button", { "aria-label": "Dial " + (i + 1) + " down", text: "▼", onclick: function () { turn(i, -1); } })
+      ]));
+    })(i);
+    function turn(i, d) {
+      if (state.solved) return;
+      state.dials[i] = (state.dials[i] + d + 10) % 10; outs[i].textContent = state.dials[i];
+      sfx("tick"); buzz(8); save();
+    }
+    var msg = el("div", { class: "msg", role: "status" });
+    var btn = el("button", { class: "primary wide", text: "Try the lock", onclick: function () {
+      if (state.solved) return;
+      if (state.dials.join("") === pz.answer) { msg.className = "msg good"; msg.textContent = "The lock clicks open: " + pz.answer + "."; solveRoom(); }
+      else wrongMsg(msg, lock);
+    } });
+    root.appendChild(lock); root.appendChild(btn); root.appendChild(msg);
+  }
+
+  // ---------- puzzle: what's missing ----------
+  function renderMissing(root, pz) {
+    root.appendChild(el("p", { text: pz.text }));
+    var before = el("div", null, [el("div", { class: "lbl", text: "Before" }), el("img", { class: "photo", src: "photos/" + pz.photo, alt: pz.alt })]);
+    var b = pz.blot;
+    var after = el("div", null, [el("div", { class: "lbl", text: "After the ghost passed through" }),
+      el("div", { class: "blotwrap" }, [
+        el("img", { class: "photo", src: "photos/" + pz.photo, alt: pz.alt + ", with a dark shape covering part of the room" }),
+        el("div", { class: "blot", "aria-hidden": "true", style: "left:" + b[0] + "%;top:" + b[1] + "%;width:" + b[2] + "%;height:" + b[3] + "%" })
+      ])]);
+    root.appendChild(el("div", { class: "pair" }, [before, after]));
+    root.appendChild(el("figcaption", { text: credit(pz.photo) }));
+    var opts = el("div", { class: "options" });
+    var msg = el("div", { class: "msg", role: "status" });
+    pz.options.forEach(function (o) {
+      var bt = el("button", { text: o });
+      if (state.wrongOpts.indexOf(o) >= 0) bt.classList.add("wrong");
+      bt.addEventListener("click", function () {
+        if (state.solved) return;
+        if (o === pz.answer) { bt.classList.add("primary"); msg.className = "msg good"; msg.textContent = "Yes: the " + o.toLowerCase() + " has vanished."; solveRoom(); }
+        else { bt.classList.add("wrong"); if (state.wrongOpts.indexOf(o) < 0) state.wrongOpts.push(o); save(); wrongMsg(msg, bt); }
+      });
+      opts.appendChild(bt);
+    });
+    root.appendChild(el("p", { text: "What's missing?", style: "margin:14px 0 0;font-weight:600" }));
+    root.appendChild(opts); root.appendChild(msg);
+  }
+
+  // ---------- puzzle: riddle chain ----------
+  function renderChain(root, pz) {
+    var list = el("ul", { class: "chain" });
+    var form = el("form", { class: "answer" });
+    var input = el("input", { type: "text", autocomplete: "off", autocapitalize: "none", spellcheck: "false", "aria-label": "Your answer", placeholder: "Your answer" });
+    form.appendChild(input);
+    form.appendChild(el("button", { class: "primary", type: "submit", text: "Check" }));
+    var msg = el("div", { class: "msg", role: "status" });
+    function draw() {
+      list.innerHTML = "";
+      pz.steps.forEach(function (s, i) {
+        if (i > state.step) return;
+        var li = el("li", { class: i < state.step ? "done" : "cur" }, [
+          el("div", { class: "tmpl", text: "Riddle " + (i + 1) + " of " + pz.steps.length }),
+          el("div", { text: s.riddle })
+        ]);
+        if (i < state.step) li.appendChild(el("b", { text: "✓ " + s.show }));
+        list.appendChild(li);
+      });
+      form.hidden = state.step >= pz.steps.length;
+    }
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (state.solved) return;
+      var s = pz.steps[state.step];
+      if (matches(input.value, s.accept)) {
+        msg.className = "msg good"; msg.textContent = "Correct: " + s.show + ".";
+        input.value = "";
+        nextStep(); draw();
+        if (state.step >= pz.steps.length) solveRoom(); else { sfx("good"); buzz(35); input.focus(); }
+      } else if (nearMiss(input.value, s.accept)) closeMsg(msg);
+      else wrongMsg(msg, form);
+    });
+    root.appendChild(list); root.appendChild(form); root.appendChild(msg);
+    draw();
+  }
+
+  // ---------- puzzle: typed answer (cipher, anagram) ----------
+  function renderText(root, pz) {
+    root.appendChild(el("p", { text: pz.text }));
+    if (pz.cipher) root.appendChild(el("div", { class: "cipher", text: pz.cipher }));
+    if (pz.text2) root.appendChild(el("p", { text: pz.text2 }));
+    var form = el("form", { class: "answer" });
+    var input = el("input", { type: "text", autocomplete: "off", autocapitalize: "none", spellcheck: "false", "aria-label": "Your answer", placeholder: pz.placeholder || "Your answer" });
+    form.appendChild(input);
+    form.appendChild(el("button", { class: "primary", type: "submit", text: "Check" }));
+    var msg = el("div", { class: "msg", role: "status" });
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (state.solved) return;
+      if (matches(input.value, pz.accept)) { msg.className = "msg good"; msg.textContent = "Correct: " + pz.accept[0].toUpperCase() + "."; input.disabled = true; solveRoom(); }
+      else if (nearMiss(input.value, pz.accept)) closeMsg(msg);
+      else wrongMsg(msg, form);
+    });
+    root.appendChild(form); root.appendChild(msg);
+  }
+
+  // ---------- end ----------
+  function rankFor(h) {
+    var rs = (GAME.ranks || []).slice().sort(function (a, b) { return a.maxHints - b.maxHints; });
+    for (var i = 0; i < rs.length; i++) if (h <= rs[i].maxHints) return rs[i];
+    return rs[rs.length - 1] || null;
+  }
+  function shareText() {
+    var h = state.totalHints || 0, rk = rankFor(h);
+    var who = state.team ? state.team + " escaped" : "We escaped";
+    var t = who + " the haunted house at " + GAME.houseNumber + " " + GAME.street + " in " + fmtTime(state.elapsed) +
+      " with " + h + " hint" + (h === 1 ? "" : "s") + (rk ? ". Rank: " + rk.title : "") + ". ";
+    t += rooms.map(function (r) { return r.relic ? r.relic.icon : ""; }).join("");
+    if (GAME.shareTag) t += "\n" + GAME.shareTag;
+    return t;
+  }
+  function renderEnd() {
+    var h = state.totalHints || 0, rk = rankFor(h);
+    $("t3").textContent = state.team ? state.team + " escaped!" : "You escaped!";
+    $("endText").textContent = GAME.endText || "";
+    var rank = $("rank"); rank.innerHTML = "";
+    if (rk) { rank.appendChild(el("b", { text: rk.title })); rank.appendChild(el("span", { text: rk.line })); }
+    $("statHints").textContent = h;
+    $("statTime").textContent = state.start ? fmtTime(state.elapsed) : "-";
+    var grid = $("relicGrid"); grid.innerHTML = "";
+    rooms.forEach(function (r) { if (r.relic) grid.appendChild(el("div", null, [el("b", { "aria-hidden": "true", text: r.relic.icon }), r.relic.name])); });
+    $("shareMsg").textContent = "";
+    show("end");
+  }
+  function share() {
+    var text = shareText(), m = $("shareMsg");
+    if (navigator.share) {
+      navigator.share({ title: "Cluehouse", text: text }).catch(function () {});
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { m.textContent = "Copied. Paste it in your group chat."; },
+        function () { m.textContent = text; });
+    } else m.textContent = text;
+  }
+
+  // ---------- wiring ----------
+  $("beginBtn").addEventListener("click", begin);
+  $("teamInput").addEventListener("keydown", function (e) { if (e.key === "Enter") begin(); });
+  $("hintBtn").addEventListener("click", useHint);
+  $("nextBtn").addEventListener("click", nextRoom);
+  $("shareBtn").addEventListener("click", share);
+  $("againBtn").addEventListener("click", function () { clearSave(); state = freshState(); history.replaceState(null, "", location.pathname); renderStart(); });
+  $("lbClose").addEventListener("click", closeLightbox);
+  $("lightbox").addEventListener("click", function (e) { if (e.target === this) closeLightbox(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLightbox(); });
+  [].forEach.call(document.querySelectorAll(".sound"), function (b) { b.addEventListener("click", toggleSound); });
+  drawSound();
+
+  // ---------- boot: ?room=N (1-based) and ?end=1 for testing ----------
+  var roomParam = parseInt(params.get("room"), 10);
+  if (params.get("end") === "1") {
+    var s = load();
+    if (s && s.end) state = s;
+    renderEnd();
+  } else if (roomParam >= 1 && roomParam <= rooms.length) {
+    var prev = load();
+    state = freshState();
+    state.start = prev && prev.start && !prev.end ? prev.start : Date.now();
+    state.elapsed = prev && prev.start && !prev.end ? prev.elapsed || 0 : 0;
+    state.totalHints = prev && !prev.end ? prev.totalHints || 0 : 0;
+    state.team = prev && !prev.end ? prev.team || "" : "";
+    state.room = roomParam - 1;
+    enterRoom();
+  } else {
+    renderStart();
+  }
+})();
+</script>
+</body>
+</html>
